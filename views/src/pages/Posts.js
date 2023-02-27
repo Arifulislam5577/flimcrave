@@ -5,7 +5,9 @@ import { useGetUsersQuery } from "../features/auth/authSlice";
 import { useGetPostsQuery } from "../features/posts/postSlice";
 
 const Posts = () => {
-  const { data, isLoading, isError, error } = useGetPostsQuery();
+  const { data, isLoading, isError, error } = useGetPostsQuery(null, {
+    refetchOnMountOrArgChange: true,
+  });
   const users = useGetUsersQuery();
 
   return (

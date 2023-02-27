@@ -60,11 +60,48 @@ export const getUsers = catchAsync(async (req, res, next) => {
 export const deleteUserByAdmin = catchAsync(async (req, res, next) => {
   try {
     const userId = req.params.id;
+
+    await Post.updateMany(
+      { $or: [{ "comments.user": userId }, { "likes.user": userId }] },
+      { $pull: { comments: { user: userId }, likes: { user: userId } } }
+    );
+    await Post.deleteMany({ user: userId });
     await User.findByIdAndDelete(userId);
     return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     return res
       .status(500)
       .json({ message: `Failed to delete user: ${error.message}` });
+  }
+});
+
+export const updateUserInfo = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  const { userName, email, password } = req.body;
+  try {
+    const user = await User.findById(userId);
+    if (user && (await user.matchPassword(password))) {
+      const update = await User.findByIdAndUpdate(user._id, {
+        userName: userName ? userName : user.userName,
+        email: email ? email : user.email,
+      });
+
+      if (!update) {
+        return res.status(403).json({ message: "User is not updated" });
+      }
+
+      const newUser = await User.findById(update._id);
+
+      const updatedUser = {
+        ...newUser._doc,
+        token: generateToken(newUser._id),
+      };
+
+      return res.status(200).json(updatedUser);
+    } else {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+  } catch (error) {
+    return res.status(403).json({ message: error.message });
   }
 });

@@ -4,13 +4,20 @@ import {
   login,
   signup,
   deleteUserByAdmin,
+  updateUserInfo,
 } from "../controllers/userControllers.js";
-import { protectedRouteAdmin } from "../middlewares/authMiddleware.js";
+import {
+  protectedRoute,
+  protectedRouteAdmin,
+} from "../middlewares/authMiddleware.js";
 const userRouter = express.Router();
 
 userRouter.route("/").get(getUsers);
 userRouter.route("/signup").post(signup);
 userRouter.route("/login").post(login);
-userRouter.route("/:id").delete(protectedRouteAdmin, deleteUserByAdmin);
+userRouter
+  .route("/:id")
+  .delete(protectedRouteAdmin, deleteUserByAdmin)
+  .patch(protectedRoute, updateUserInfo);
 
 export default userRouter;

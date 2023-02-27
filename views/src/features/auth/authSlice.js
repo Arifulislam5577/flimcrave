@@ -47,6 +47,21 @@ export const authAPI = createApi({
       },
     }),
 
+    updateUser: builder.mutation({
+      query: (data) => ({
+        url: `/api/user/${data.id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Users"],
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const { data } = await queryFulfilled;
+        localStorage.removeItem("user");
+        localStorage.setItem("user", JSON.stringify(data));
+        dispatch(setUser(data));
+      },
+    }),
+
     deleteUser: builder.mutation({
       query: (id) => ({
         url: `/api/user/${id}`,
@@ -62,4 +77,5 @@ export const {
   useLoginUserMutation,
   useDeleteUserMutation,
   useGetUsersQuery,
+  useUpdateUserMutation,
 } = authAPI;

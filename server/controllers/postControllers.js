@@ -49,8 +49,6 @@ export const getPosts = catchAsync(async (req, res) => {
 export const addNewLikeInPost = catchAsync(async (req, res) => {
   const user = req.user;
   const post = await Post.findById(req.params.id);
-
-  console.log({ post });
   const existingLike = post.likes.find((like) => like.user.equals(user._id));
 
   if (existingLike) {
