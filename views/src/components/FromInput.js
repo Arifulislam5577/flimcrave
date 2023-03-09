@@ -11,9 +11,22 @@ const FormInput = ({
 }) => {
   return (
     <div className="text-white">
-      <label htmlFor={name} className="block mb-2 text-sm">
-        {label}
-      </label>
+      <div
+        className={`mb-2 ${
+          type === "password" && "flex items-center justify-between"
+        }`}
+      >
+        <label htmlFor={name} className="block mb-2 text-sm">
+          {label}
+        </label>
+        <label
+          className={` mb-2 text-sm ${
+            type === "password" ? "block text-xs underline" : "hidden"
+          }`}
+        >
+          Forgot Password?
+        </label>
+      </div>
       <input
         type={type}
         id={name}

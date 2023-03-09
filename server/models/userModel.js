@@ -10,7 +10,15 @@ const userSchema = new Schema(
     },
     userCoverImg: {
       type: String,
-      default: "",
+      default:
+        "https://image.tmdb.org/t/p/original/sANUefL2v8VI6fSfK3gWAG3XBt4.jpg",
+    },
+
+    profile: {
+      type: String,
+      default: `https://randomuser.me/api/portraits/men/${
+        Math.floor(Math.random() * 50) + 1
+      }.jpg`,
     },
     email: {
       type: String,
@@ -34,10 +42,18 @@ const userSchema = new Schema(
       type: String,
       default: "Bangladesh",
     },
-
+    contact: {
+      type: String,
+      default: "",
+    },
     isPublic: {
       type: Boolean,
       default: true,
+    },
+
+    isRestricted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

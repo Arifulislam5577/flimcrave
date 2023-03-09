@@ -31,6 +31,10 @@ export const signup = catchAsync(async (req, res) => {
     email: user.email,
     country: user.country,
     isAdmin: user.isAdmin,
+    profile: user.profile,
+    contact: user.contact,
+    userCoverImg: user.userCoverImg,
+    isRestricted: user.isRestricted,
     token: generateToken(user._id),
   });
 });
@@ -45,6 +49,10 @@ export const login = catchAsync(async (req, res) => {
       email: user.email,
       country: user.country,
       isAdmin: user.isAdmin,
+      profile: user.profile,
+      contact: user.contact,
+      userCoverImg: user.userCoverImg,
+      isRestricted: user.isRestricted,
       token: generateToken(user._id),
     });
   } else {
@@ -77,13 +85,16 @@ export const deleteUserByAdmin = catchAsync(async (req, res, next) => {
 
 export const updateUserInfo = catchAsync(async (req, res, next) => {
   const userId = req.params.id;
-  const { userName, email, password } = req.body;
+  const { userName, email, password, contact, coverPhoto, isPublic } = req.body;
   try {
     const user = await User.findById(userId);
     if (user && (await user.matchPassword(password))) {
       const update = await User.findByIdAndUpdate(user._id, {
         userName: userName ? userName : user.userName,
         email: email ? email : user.email,
+        contact: contact ? contact : user.contact,
+        userCoverImg: coverPhoto ? coverPhoto : user.userCoverImg,
+        isPublic: isPublic ? isPublic : user.isPublic,
       });
 
       if (!update) {
@@ -104,4 +115,26 @@ export const updateUserInfo = catchAsync(async (req, res, next) => {
   } catch (error) {
     return res.status(403).json({ message: error.message });
   }
+});
+
+export const userRestriction = catchAsync(async (req, res) => {
+  const findById = await User.findById(req.params.id);
+  const user = await User.findByIdAndUpdate(req.params.id, {
+    isRestricted: !findById?.isRestricted,
+  });
+
+  if (user) {
+    return res.status(200).json({ message: "User updated successfully" });
+  } else {
+    return res.status(500).json({ message: "User not updated" });
+  }
+});
+
+export const getUserInfo = catchAsync(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    return res.status(200).json(user);
+  }
+  return res.status(500).json({ message: "User not found" });
 });

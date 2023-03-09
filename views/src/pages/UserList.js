@@ -2,10 +2,12 @@ import React from "react";
 import {
   useDeleteUserMutation,
   useGetUsersQuery,
+  useUserRestrictedMutation,
 } from "../features/auth/authSlice";
 
 const UserList = () => {
   const { data, isLoading, isError } = useGetUsersQuery();
+  const [updateRestricted] = useUserRestrictedMutation();
   const [deleteUser] = useDeleteUserMutation();
 
   if (isLoading) {
@@ -22,6 +24,7 @@ const UserList = () => {
           <tr className="text-left">
             <th className="p-3">User Name</th>
             <th className="p-3">Email</th>
+            <th className="p-3">Restricted</th>
             <th className="p-3">Action</th>
           </tr>
         </thead>
@@ -36,6 +39,24 @@ const UserList = () => {
               </td>
               <td className="p-3">
                 <p>{user?.email}</p>
+              </td>
+
+              <td className="p-3">
+                {user.isRestricted ? (
+                  <button
+                    disabled={user.isAdmin}
+                    onClick={() => updateRestricted(user._id)}
+                  >
+                    Unblock
+                  </button>
+                ) : (
+                  <button
+                    disabled={user.isAdmin}
+                    onClick={() => updateRestricted(user._id)}
+                  >
+                    Block
+                  </button>
+                )}
               </td>
               <td className="p-3 flex gap-2">
                 {user?.isAdmin ? (

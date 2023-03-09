@@ -15,20 +15,6 @@ export const movieAPI = createApi({
       query: (id) => `/api/movie/${id}`,
       providesTags: ["Movies"],
     }),
-    // updateUser: builder.mutation({
-    //   query: (id) => ({
-    //     url: `/api/users/${id}`,
-    //     method: "PATCH",
-    //   }),
-    //   invalidatesTags: ["Users"],
-    // }),
-    // deleteUser: builder.mutation({
-    //   query: (id) => ({
-    //     url: `/api/users/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: ["Users"],
-    // }),
   }),
 });
 

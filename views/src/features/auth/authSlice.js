@@ -18,7 +18,9 @@ export const authAPI = createApi({
       query: () => "/api/user",
       providesTags: ["Users"],
     }),
-
+    getUser: builder.query({
+      query: (id) => `/api/user/${id}`,
+    }),
     createUser: builder.mutation({
       query: (data) => ({
         url: `/api/user/signup`,
@@ -69,6 +71,14 @@ export const authAPI = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+
+    userRestricted: builder.mutation({
+      query: (id) => ({
+        url: `/api/user/admin/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Users"],
+    }),
   }),
 });
 
@@ -78,4 +88,6 @@ export const {
   useDeleteUserMutation,
   useGetUsersQuery,
   useUpdateUserMutation,
+  useUserRestrictedMutation,
+  useGetUserQuery,
 } = authAPI;

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { FiAlertTriangle } from "react-icons/fi";
 import Modal from "../components/Modal";
 import { useGetSingleMovieQuery } from "../features/movile/movieSlice";
 
 const SingleMovie = () => {
   const [showModal, setShowModal] = useState(false);
-
+  const { user } = useSelector((state) => state.user);
   const { id } = useParams();
 
   const handleCreatePost = () => {
@@ -66,12 +68,19 @@ const SingleMovie = () => {
           </p>
 
           <div className="my-5">
-            <button
-              onClick={handleCreatePost}
-              className="px-6 py-3 rounded-full border"
-            >
-              Share With Friends
-            </button>
+            {user?.isRestricted ? (
+              <p className="flex items-center gap-2 text-sm">
+                <FiAlertTriangle color="yellow" /> You are block, You can not
+                create new post
+              </p>
+            ) : (
+              <button
+                onClick={handleCreatePost}
+                className="px-6 py-3 rounded-full border"
+              >
+                Share With Friends
+              </button>
+            )}
           </div>
         </div>
       </div>

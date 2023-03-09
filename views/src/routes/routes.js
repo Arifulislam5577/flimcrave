@@ -9,6 +9,7 @@ import Profile from "../pages/Profile";
 import SignIn from "../pages/SignIn";
 import SingleMovie from "../pages/SingleMovie";
 import UserList from "../pages/UserList";
+import UserProfile from "../pages/UserProfile";
 import PrivateRoute, { AdminRoute } from "./PrivateRoute";
 
 export const router = createBrowserRouter([
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "/movie/:id", element: <SingleMovie /> },
+      { path: "/user/:id", element: <UserProfile /> },
       {
         path: "/posts",
         element: (
@@ -40,7 +42,6 @@ export const router = createBrowserRouter([
             path: "users",
             element: (
               <AdminRoute>
-                {" "}
                 <UserList />
               </AdminRoute>
             ),

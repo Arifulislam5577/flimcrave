@@ -1,16 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useUpdateUserMutation } from "../features/auth/authSlice";
 import { logout } from "../features/auth/authState";
+import toast from "react-hot-toast";
+import { BsCamera } from "react-icons/bs";
+import MovieModal from "../components/MovieModal";
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const [updateUser, { isLoading, isError, error }] = useUpdateUserMutation();
+  const [updateUser, { isLoading, isError, error, isSuccess }] =
+    useUpdateUserMutation();
 
+  const [showModal, setShowModal] = useState(false);
   const [email, setEmail] = useState(user?.email);
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState(user?.userName);
+  const [contact, setContact] = useState(user?.contact);
+  const [coverPhoto, setCoverPhoto] = useState("");
+  const [status, setStatus] = useState(user?.isPublic);
+
+  const handleChange = (e) => {
+    setStatus(e.target.value);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,28 +32,40 @@ const Profile = () => {
       email,
       password,
       userName,
+      contact,
+      coverPhoto,
+      isPublic: status,
     };
 
     updateUser(newUser);
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Updated user successfully");
+    }
+  }, [isSuccess]);
+
   return (
     <section>
       <div>
-        <img
-          className="h-96 w-full object-cover rounded"
-          src="https://image.tmdb.org/t/p/original/sANUefL2v8VI6fSfK3gWAG3XBt4.jpg"
-          alt=""
-        />
-        <div className="flex items-center gap-5 px-6 -mt-10">
+        <div className="mb-10 relative">
           <img
-            src={
-              user?.userCoverImg
-                ? user?.userCoverImg
-                : `https://randomuser.me/api/portraits/men/${
-                    Math.floor(Math.random() * 50) + 1
-                  }.jpg`
-            }
+            className="h-96  w-full object-cover rounded z-0"
+            src={coverPhoto ? coverPhoto : user?.userCoverImg}
+            alt="cover"
+          />
+
+          <button
+            className="absolute top-5 right-5 bg-white p-2 rounded-full z-10"
+            onClick={() => setShowModal(true)}
+          >
+            <BsCamera size={20} />
+          </button>
+        </div>
+        <div className="flex items-center gap-5 px-6 ">
+          <img
+            src={user?.profile}
             alt="user"
             className="rounded border-2 border-white "
           />
@@ -101,6 +125,42 @@ const Profile = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
+
+          <div className="mb-4">
+            <label
+              className="block w-full text-white text-sm mb-2"
+              htmlFor="name"
+            >
+              Contact
+            </label>
+            <input
+              className="block w-full text-white bg-slate-800 py-3 px-5 focus:outline-none rounded"
+              type="text"
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              min="11"
+              max="11"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="user"
+              className="block w-full text-white text-sm mb-2"
+            >
+              Profile Lock
+            </label>
+            <select
+              id="user"
+              value={status}
+              onChange={handleChange}
+              className="block w-full text-white bg-slate-800 py-3 px-5 focus:outline-none rounded"
+            >
+              <option value="false">Private</option>
+              <option value="true">UnLock</option>
+            </select>
+          </div>
+
           <div className="mb-4">
             <label
               className="block w-full text-white text-sm mb-2"
@@ -127,6 +187,9 @@ const Profile = () => {
           </div>
         </form>
       </div>
+      {showModal && (
+        <MovieModal setShowModal={setShowModal} setCoverPhoto={setCoverPhoto} />
+      )}
     </section>
   );
 };
