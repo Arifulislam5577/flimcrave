@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FiAlertTriangle } from "react-icons/fi";
 import Modal from "../components/Modal";
 import { useGetSingleMovieQuery } from "../features/movile/movieSlice";
@@ -72,6 +72,14 @@ const SingleMovie = () => {
               <p className="flex items-center gap-2 text-sm">
                 <FiAlertTriangle color="yellow" /> You are block, You can not
                 create new post
+              </p>
+            ) : !user ? (
+              <p className="flex items-center gap-2 text-sm">
+                <FiAlertTriangle color="yellow" /> Please{" "}
+                <Link to="/login" className="text-orange-600 underline">
+                  Login
+                </Link>{" "}
+                to create new post
               </p>
             ) : (
               <button
