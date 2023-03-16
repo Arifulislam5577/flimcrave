@@ -12,7 +12,7 @@ const Home = () => {
           {isLoading ? (
             <Loader count={20} />
           ) : (
-            data?.map((movie) => <Movie key={movie.id} movieData={movie} />)
+            data?.map((movie) => <Movie key={movie._id} movieData={movie} />)
           )}
         </div>
       </div>

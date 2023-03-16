@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoutes.js";
 import { notFound, errorHandler } from "./middlewares/errorMiddleware.js";
 import movieRouter from "./routes/movieRoutes.js";
 import postRouter from "./routes/postRoutes.js";
+import { createMovie } from "./controllers/movieControllers.js";
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,10 @@ app.get("/", (req, res) => {
 });
 
 // API
+
+setTimeout(() => {
+  createMovie();
+}, 3600000);
 
 app.use("/api/user", userRouter);
 app.use("/api/movie", movieRouter);

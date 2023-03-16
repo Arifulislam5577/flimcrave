@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaTimes } from "react-icons/fa";
 import { useCreatePostMutation } from "../features/posts/postSlice";
 
 const Modal = ({ id, setShowModal }) => {
@@ -31,9 +32,15 @@ const Modal = ({ id, setShowModal }) => {
   }, [isSuccess, setShowModal, navigate]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center z-20">
       <div className="absolute inset-0 bg-gray-600 opacity-75"></div>
       <div className="relative z-10 m-8 bg-slate-900 p-10 max-w-md rounded-md overflow-hidden">
+        <button
+          className="p-1 absolute top-0 right-0  text-white  text-sm"
+          onClick={() => setShowModal(false)}
+        >
+          <FaTimes size={24} />
+        </button>
         <form onSubmit={onSumbit}>
           <div>
             {isError && (
@@ -44,7 +51,7 @@ const Modal = ({ id, setShowModal }) => {
             </label>
             <textarea
               name="text"
-              className="w-full bg-slate-700 rounded text-white p-4"
+              className="w-full bg-slate-700 rounded text-white p-4 focus:outline-none"
               id="reivew"
               rows="5"
               required

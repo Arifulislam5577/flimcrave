@@ -1,19 +1,14 @@
 import axios from "axios";
 import catchAsync from "express-async-handler";
+import MovieModel from "../models/MovieModel.js";
 import Post from "../models/postModel.js";
 
 export const createPost = catchAsync(async (req, res) => {
   const { postId, reviewText, rating } = req.body;
-
-  const { data } = await axios(
-    `https://api.themoviedb.org/3/movie/${postId}?api_key=${process.env.MOVIE_API}`
-  );
-
+  const movie = await MovieModel.findById(postId);
   const newPost = new Post({
     user: req.user?._id,
-    moviePoster: `https://image.tmdb.org/t/p/original${
-      data ? data?.backdrop_path : ""
-    }`,
+    moviePoster: `https://image.tmdb.org/t/p/original${movie?.backdrop_path}`,
     review: reviewText,
     rating,
   });

@@ -1,15 +1,37 @@
 import mongoose from "mongoose";
-const { Schema, model } = mongoose;
+const { Schema } = mongoose;
 
-const Like = new Schema(
+export const Like = new Schema(
   {
     user: {
       type: mongoose.Types.ObjectId,
       ref: "User",
-      required: true,
     },
   },
   { timestamps: true }
 );
 
-export default Like;
+export const UnLike = new Schema(
+  {
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
+
+export const Rating = new Schema(
+  {
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+
+    rate: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
