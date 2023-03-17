@@ -16,13 +16,13 @@ export const signup = catchAsync(async (req, res) => {
     return res.status(400).json({ message: "Email already exists" });
   }
 
-  const country = await getCountry();
+  // const country = await getCountry(); //GET COUNTRY NAME
 
   const user = await User.create({
     userName: name,
     email,
     password,
-    country,
+    country: "Bangladesh",
   });
 
   res.status(201).json({
