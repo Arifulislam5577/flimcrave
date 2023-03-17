@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { BiDislike, BiLike, BiComment, BiShare } from "react-icons/bi";
+import { BsStarFill } from "react-icons/bs";
 import Modal from "../components/Modal";
 import {
   useAddDisLikeInMovieMutation,
   useAddLikeInMovieMutation,
   useGetSingleMovieQuery,
+  useAddOpinionInMovieMutation,
 } from "../features/movile/movieSlice";
 import ReactStars from "react-rating-stars-component";
 
@@ -14,18 +16,41 @@ const SingleMovie = () => {
   const [showModal, setShowModal] = useState(false);
   const { user } = useSelector((state) => state.user);
   const { id } = useParams();
+  const [rate, setRate] = useState(5);
+  const [comment, setComment] = useState("");
+  const { isLoading, data } = useGetSingleMovieQuery(id);
+  const [addDisLike] = useAddDisLikeInMovieMutation();
+  const [addLike] = useAddLikeInMovieMutation();
+  const [addOpinion, { isLoading: addOpinionLoading, isSuccess }] =
+    useAddOpinionInMovieMutation();
 
   const handleCreatePost = () => {
     setShowModal(true);
   };
 
   const ratingChanged = (newRating) => {
-    console.log(newRating);
+    setRate(newRating);
   };
 
-  const { isLoading, data } = useGetSingleMovieQuery(id);
-  const [addDisLike] = useAddDisLikeInMovieMutation();
-  const [addLike] = useAddLikeInMovieMutation();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!comment) {
+      return;
+    }
+    const data = {
+      rate,
+      comment,
+      id,
+    };
+    addOpinion(data);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setComment("");
+      setRate(5);
+    }
+  }, [isSuccess]);
 
   if (isLoading) {
     return (
@@ -119,25 +144,50 @@ const SingleMovie = () => {
                 />
               </div>
 
-              <form>
+              <form onSubmit={handleSubmit}>
                 <textarea
                   className="w-full block focus:outline-none bg-slate-700 rounded p-2 text-white"
                   rows="2"
                   placeholder="Enter Your Opinion"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  required
                 ></textarea>
 
                 <div className="mt-3 flex items-center justify-end">
                   <button
                     type="submit"
+                    disabled={addOpinionLoading}
                     className="px-6 py-2 bg-orange-600 rounded text-sm text-white"
                   >
-                    Submit
+                    {addOpinionLoading ? "Loading..." : "Submit"}
                   </button>
                 </div>
               </form>
             </div>
           </div>
         )}
+
+        <div className="lg:col-span-2 w-full">
+          <h1 className="text-xl text-white font-bold">Opinions</h1>
+
+          {data?.opinions?.map((opinion) => {
+            return (
+              <div className="my-5" key={opinion._id}>
+                <div className="flex items-center gap-5">
+                  {Array.from({ length: opinion?.rate }).map((_, index) => (
+                    <BsStarFill key={index} size={20} color="#ffd700" />
+                  ))}
+                  <h2 className="text-white">Rating By</h2>
+                  <h2 className="text-orange-600">{opinion?.user?.userName}</h2>
+                </div>
+                <p className="text-sm text-white mt-2">
+                  {opinion?.commentText}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

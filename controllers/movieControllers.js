@@ -1,4 +1,3 @@
-import catchAsync from "express-async-handler";
 import axios from "axios";
 import MovieModel from "../models/MovieModel.js";
 
@@ -45,7 +44,9 @@ export const getMoviews = async (req, res) => {
 
 export const getMoviewByID = async (req, res) => {
   try {
-    const movie = await MovieModel.findById(req.params.id);
+    const movie = await MovieModel.findById(req.params.id).populate(
+      "opinions.user"
+    );
     return res.status(200).json(movie);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -102,6 +103,33 @@ export const movieDisLikeReaction = async (req, res) => {
       movie.UnLikes.push({ user: user._id });
       await movie.save();
       return res.status(200).json({ message: "DisLike Add" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const createOpinionInMovie = async (req, res) => {
+  try {
+    const user = req.user;
+    const movie = await MovieModel.findById(req.params.id);
+    const { rate, commentText } = req.body;
+
+    const existingOpinion = movie.opinions.find((opinion) =>
+      opinion.user.equals(user._id)
+    );
+
+    if (existingOpinion) {
+      // Update the existing opinion
+      existingOpinion.rate = rate;
+      existingOpinion.commentText = commentText;
+      await movie.save();
+      return res.status(200).json({ message: "Opinion updated successfully" });
+    } else {
+      // Create a new opinion
+      movie.opinions.push({ user: user._id, rate, commentText });
+      await movie.save();
+      return res.status(201).json({ message: "Opinion created successfully" });
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });

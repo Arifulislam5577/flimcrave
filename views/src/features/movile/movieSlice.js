@@ -1,10 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setUser } from "../auth/authState";
 
 export const movieAPI = createApi({
   reducerPath: "movieAPI",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5000",
+    prepareHeaders: (headers, { getState }) => {
+      const { token } = getState()?.user?.user || {};
+      headers.set("Authorization", `Bearer ${token}`);
+      headers.set("Content-Type", "application/json");
+      return headers;
+    },
   }),
   tagTypes: ["Movies"],
   endpoints: (builder) => ({
@@ -22,11 +27,6 @@ export const movieAPI = createApi({
         method: "PATCH",
       }),
       invalidatesTags: ["Movies"],
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const { data } = await queryFulfilled;
-        localStorage.setItem("user", JSON.stringify(data));
-        dispatch(setUser(data));
-      },
     }),
     addDisLikeInMovie: builder.mutation({
       query: (postId) => ({
@@ -34,11 +34,14 @@ export const movieAPI = createApi({
         method: "PATCH",
       }),
       invalidatesTags: ["Movies"],
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const { data } = await queryFulfilled;
-        localStorage.setItem("user", JSON.stringify(data));
-        dispatch(setUser(data));
-      },
+    }),
+    addOpinionInMovie: builder.mutation({
+      query: (data) => ({
+        url: `/api/movie/${data.id}`,
+        method: "PATCH",
+        body: { commentText: data.comment, rate: data.rate },
+      }),
+      invalidatesTags: ["Movies"],
     }),
   }),
 });
@@ -48,4 +51,5 @@ export const {
   useGetSingleMovieQuery,
   useAddDisLikeInMovieMutation,
   useAddLikeInMovieMutation,
+  useAddOpinionInMovieMutation,
 } = movieAPI;

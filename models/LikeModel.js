@@ -21,7 +21,7 @@ export const UnLike = new Schema(
   { timestamps: true }
 );
 
-export const Rating = new Schema(
+export const Opinion = new Schema(
   {
     user: {
       type: mongoose.Types.ObjectId,
@@ -30,7 +30,10 @@ export const Rating = new Schema(
 
     rate: {
       type: Number,
-      default: 0,
+    },
+
+    commentText: {
+      type: String,
     },
   },
   { timestamps: true }

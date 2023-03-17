@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Comment from "./CommentModel.js";
-import { Like, UnLike, Rating } from "./LikeModel.js";
+import { Like, UnLike, Opinion } from "./LikeModel.js";
 const { Schema, model } = mongoose;
 
 const MovieSchema = new Schema(
@@ -14,8 +14,7 @@ const MovieSchema = new Schema(
     vote_count: { type: Number, require: true },
     Likes: [Like],
     UnLikes: [UnLike],
-    ratings: [Rating],
-    opinions: [Comment],
+    opinions: [Opinion],
   },
   { timestamps: true }
 );

@@ -14,7 +14,7 @@ const MovieModal = ({ setCoverPhoto, setShowModal }) => {
         ) : (
           <div className="grid grid-cols-4 gap-4 items-center">
             {data?.map((item) => (
-              <div className="col-span-1" key={item.id}>
+              <div className="col-span-1" key={item._id}>
                 <img
                   onClick={() =>
                     setCoverPhoto(

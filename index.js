@@ -22,7 +22,7 @@ app.get("/", (req, res) => {
 
 setTimeout(() => {
   createMovie();
-}, 3600000);
+}, 1000);
 
 app.use("/api/user", userRouter);
 app.use("/api/movie", movieRouter);
